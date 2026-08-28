@@ -1,9 +1,10 @@
-import React from "react";
+import React, { createContext } from "react";
 import SummaryCard from "./components/SummaryCard";
 import TransactionForm from "./components/TransactionForm";
 import TransactionList from "./components/TransactionList";
 
 function App() {
+
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
       <div className="mx-auto max-w-7xl">
