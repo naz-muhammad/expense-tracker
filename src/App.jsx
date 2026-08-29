@@ -7,9 +7,7 @@ import { TrasactionContext } from "./context/TransactionContextProvider";
 function App() {
   const { transaction } = useContext(TrasactionContext);
 
-  const [editingTransaction , setEditingTransaction] = useState(null)
-  console.log(editingTransaction);
-  
+  const [editingTransaction, setEditingTransaction] = useState(null);
 
   const totalIncome = transaction
     .filter((item) => item.type === "income")
@@ -45,7 +43,6 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
       <div className="mx-auto max-w-7xl">
-
         {/* Header */}
         <header className="mb-8 sm:mb-10">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
@@ -58,35 +55,40 @@ function App() {
         </header>
 
         {/* Summary Cards */}
-        <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-          {summaryCards.map((card) => (
-            <SummaryCard
+        <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
+          {summaryCards.map((card, index) => (
+            <div
               key={card.title}
-              title={card.title}
-              balance={card.balance}
-              color={card.color}
-              bgColor={card.bgColor}
-            />
+              className={index === 0 ? "col-span-2 lg:col-span-1" : ""}
+            >
+              <SummaryCard
+                title={card.title}
+                balance={card.balance}
+                color={card.color}
+                bgColor={card.bgColor}
+              />
+            </div>
           ))}
         </section>
 
         {/* Main Content */}
         <main className="grid grid-cols-1 gap-6 lg:grid-cols-5 lg:items-start">
-
           {/* Add Transaction */}
           <section className="lg:col-span-2">
-            <TransactionForm editingTransaction={editingTransaction} setEditingTransaction={setEditingTransaction}/>
+            <TransactionForm
+              editingTransaction={editingTransaction}
+              setEditingTransaction={setEditingTransaction}
+            />
           </section>
 
           {/* Transactions */}
           <section className="lg:col-span-3">
-            <TransactionList 
-            editingTransaction={editingTransaction}
-            setEditingTransaction={setEditingTransaction} />
+            <TransactionList
+              editingTransaction={editingTransaction}
+              setEditingTransaction={setEditingTransaction}
+            />
           </section>
-
         </main>
-
       </div>
     </div>
   );
