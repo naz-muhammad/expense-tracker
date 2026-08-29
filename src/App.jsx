@@ -1,9 +1,46 @@
-import React, { createContext } from "react";
+import React, { useContext, useState } from "react";
 import SummaryCard from "./components/SummaryCard";
 import TransactionForm from "./components/TransactionForm";
 import TransactionList from "./components/TransactionList";
+import { TrasactionContext } from "./context/TransactionContextProvider";
 
 function App() {
+  const { transaction } = useContext(TrasactionContext);
+
+  const [editingTransaction , setEditingTransaction] = useState(null)
+  console.log(editingTransaction);
+  
+
+  const totalIncome = transaction
+    .filter((item) => item.type === "income")
+    .reduce((total, item) => total + Number(item.amount), 0);
+
+  const totalExpense = transaction
+    .filter((item) => item.type === "expense")
+    .reduce((total, item) => total + Number(item.amount), 0);
+
+  const totalBalance = totalIncome - totalExpense;
+
+  const summaryCards = [
+    {
+      title: "Total Balance",
+      balance: totalBalance,
+      color: "text-blue-600",
+      bgColor: "bg-blue-600",
+    },
+    {
+      title: "Income",
+      balance: totalIncome,
+      color: "text-green-600",
+      bgColor: "bg-green-600",
+    },
+    {
+      title: "Expense",
+      balance: totalExpense,
+      color: "text-red-600",
+      bgColor: "bg-red-600",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
@@ -22,26 +59,15 @@ function App() {
 
         {/* Summary Cards */}
         <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-          <SummaryCard
-            title="Total Balance"
-            balance="$50,000"
-            color="text-blue-600"
-            bgColor="bg-blue-600"
-          />
-
-          <SummaryCard
-            title="Income"
-            balance="$2,323"
-            color="text-green-600"
-            bgColor="bg-green-600"
-          />
-
-          <SummaryCard
-            title="Expense"
-            balance="$321"
-            color="text-red-600"
-            bgColor="bg-red-600"
-          />
+          {summaryCards.map((card) => (
+            <SummaryCard
+              key={card.title}
+              title={card.title}
+              balance={card.balance}
+              color={card.color}
+              bgColor={card.bgColor}
+            />
+          ))}
         </section>
 
         {/* Main Content */}
@@ -49,12 +75,14 @@ function App() {
 
           {/* Add Transaction */}
           <section className="lg:col-span-2">
-            <TransactionForm />
+            <TransactionForm editingTransaction={editingTransaction} setEditingTransaction={setEditingTransaction}/>
           </section>
 
           {/* Transactions */}
           <section className="lg:col-span-3">
-            <TransactionList />
+            <TransactionList 
+            editingTransaction={editingTransaction}
+            setEditingTransaction={setEditingTransaction} />
           </section>
 
         </main>

@@ -1,8 +1,27 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { TrasactionContext } from "../context/TransactionContextProvider";
 
-function TransactionList() {
-  const { transaction } = useContext(TrasactionContext);
+function TransactionList({setEditingTransaction}) {
+  const { transaction , deleteTransaction , updateTransaction } = useContext(TrasactionContext);
+
+  const [category , setCategory] = useState('')
+  
+  const categories = [
+    "food",
+    "transport",
+    "shopping",
+    "bills",
+    "entertainment",
+    "health",
+    "education",
+    "rent",
+    "salary",
+    "freelance",
+    "business",
+    "investment",
+    "gift",
+    "other"
+  ]
 
   return (
     <div className="w-full mt-8 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
@@ -29,15 +48,18 @@ function TransactionList() {
         </div>
 
         {/* Category */}
-        <select className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+        <select className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+        value={category}
+        onChange={(e)=> setCategory(e.target.value)}
+        >
           <option>All Categories</option>
-          <option>Food</option>
-          <option>Transport</option>
-          <option>Shopping</option>
-          <option>Bills</option>
-          <option>Entertainment</option>
-          <option>Health</option>
-          <option>Education</option>
+          
+          {
+            categories.map((item)=> {
+              return <option key={item} value={item}> {item} </option>
+            })
+          }
+          
         </select>
       </div>
 
@@ -60,6 +82,7 @@ function TransactionList() {
                 <button
                   type="button"
                   className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+                  onClick={()=> setEditingTransaction(item)}
                 >
                   Edit
                 </button>
@@ -67,6 +90,7 @@ function TransactionList() {
                 <button
                   type="button"
                   className="rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                  onClick={()=> deleteTransaction(item.id)}
                 >
                   Delete
                 </button>

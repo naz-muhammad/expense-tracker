@@ -1,9 +1,9 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { TrasactionContext } from '../context/TransactionContextProvider';
 
-function TransactionForm() {
+function TransactionForm({editingTransaction , setEditingTransaction}) {
 
-  const {setTransaction} = useContext(TrasactionContext);
+  const {setTransaction , updateTransaction} = useContext(TrasactionContext);
 
   const [description, setDescription] = useState("")
   const [amount, setAmount] = useState("")
@@ -11,10 +11,36 @@ function TransactionForm() {
   const [category, setCategory] = useState("")
   const [date, setDate] = useState("")
 
+  useEffect(()=> {
+    if (editingTransaction) {
+    setDescription(editingTransaction.description);
+    setAmount(editingTransaction.amount)
+    setType(editingTransaction.type)
+    setCategory(editingTransaction.category)
+    setDate(editingTransaction.date)
+  }
+  },[editingTransaction])
+
+  const updatedTransaction = {
+  id: editingTransaction?.id,
+  category,
+  amount,
+  type,
+  description,
+  date
+};
+
   function handleSubmit(e) {
     e.preventDefault();
 
-    setTransaction((prev) => [...prev , { id: prev.length + 1 , category , amount , type , description , date}])
+    if (editingTransaction) {
+      updateTransaction(updatedTransaction)
+    } else {
+          setTransaction((prev) => [...prev , { id: prev.length + 1 , category , amount , type , description , date}])
+
+    }
+
+    setEditingTransaction(null)
   }
 
   const categories = [
@@ -167,12 +193,21 @@ function TransactionForm() {
         </div>
 
         {/* Button */}
+        {
+          editingTransaction ? <button
+          type="submit"
+          className="w-full rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700 active:scale-[0.99] sm:w-auto"
+        >
+          Update Transaction
+        </button>
+        :
         <button
           type="submit"
           className="w-full rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700 active:scale-[0.99] sm:w-auto"
         >
           Add Transaction
         </button>
+        }
 
       </form>
     </div>
