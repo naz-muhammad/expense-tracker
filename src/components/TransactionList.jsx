@@ -2,9 +2,10 @@ import React, { useContext, useState } from "react";
 import { TrasactionContext } from "../context/TransactionContextProvider";
 
 function TransactionList({setEditingTransaction}) {
-  const { transaction , deleteTransaction , updateTransaction } = useContext(TrasactionContext);
+  const { transaction , deleteTransaction } = useContext(TrasactionContext);
 
   const [category , setCategory] = useState('')
+  const [searchInput , setSearchInput] = useState('')
   
   const categories = [
     "food",
@@ -22,6 +23,13 @@ function TransactionList({setEditingTransaction}) {
     "gift",
     "other"
   ]
+
+  const filteredTransactions = transaction.filter((item) => {
+    const filteredSearch = item.description.toLowerCase().includes(searchInput.toLowerCase());
+    const filteredCategory = category === '' || item.category === category;
+
+    return filteredCategory && filteredSearch;
+  })
 
   return (
     <div className="w-full mt-8 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
@@ -42,6 +50,8 @@ function TransactionList({setEditingTransaction}) {
         <div className="sm:col-span-2">
           <input
             type="text"
+            value={searchInput}
+            onChange={(e)=> setSearchInput(e.target.value)}
             placeholder="Search transactions..."
             className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
           />
@@ -52,7 +62,7 @@ function TransactionList({setEditingTransaction}) {
         value={category}
         onChange={(e)=> setCategory(e.target.value)}
         >
-          <option>All Categories</option>
+          <option value="">All Categories</option>
           
           {
             categories.map((item)=> {
@@ -65,7 +75,7 @@ function TransactionList({setEditingTransaction}) {
 
       {/* Transaction List */}
       <div className="space-y-3">
-        {transaction.map((item) => (
+        {filteredTransactions.map((item) => (
           <div key={item.id} className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-gray-50 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               <h3 className="truncate font-semibold text-gray-900">
