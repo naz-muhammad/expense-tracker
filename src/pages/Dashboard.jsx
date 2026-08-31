@@ -138,14 +138,6 @@ function Dashboard() {
           ))}
         </section>
 
-        {/* ADD TRANSACTION */}
-        <section className="mb-7 sm:mb-8">
-          <TransactionForm
-            editingTransaction={editingTransaction}
-            setEditingTransaction={setEditingTransaction}
-          />
-        </section>
-
         {/* EXPENSE ANALYTICS */}
         <main className="space-y-6 sm:space-y-8">
 
@@ -167,6 +159,13 @@ function Dashboard() {
             <ExpenseTrend categoryByDate={categoryByDate} />
           </section>
 
+          {/* ADD TRANSACTION */}
+        <section className="mb-7 sm:mb-8">
+          <TransactionForm
+            editingTransaction={editingTransaction}
+            setEditingTransaction={setEditingTransaction}
+          />
+        </section>
           
         </main>
       </div>
