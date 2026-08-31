@@ -1,10 +1,20 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const TrasactionContext = createContext()
 
 function TransactionContextProvider({children}) {
 
-  const [transaction , setTransaction] = useState([]);
+  const [transaction , setTransaction] = useState(()=> {
+     const savedTransaction = localStorage.getItem("transaction");
+
+     return savedTransaction 
+     ? JSON.parse(savedTransaction)
+     : []
+  });
+
+  useEffect(()=> {
+    localStorage.setItem("transaction" , JSON.stringify(transaction))
+  }, [transaction])
 
   const deleteTransaction = (itemId) => {
     setTransaction(

@@ -1,28 +1,24 @@
 import React from "react";
 import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
   Pie,
   PieChart,
+  ResponsiveContainer,
+  Tooltip,
   Legend,
-  Sector,
+  Cell,
 } from "recharts";
 
 function ExpenseByCategory({ categoryTotals }) {
+  // Convert the categoryTotals object into the array format
+  // that Recharts expects.
   const chartData = Object.entries(categoryTotals).map(
     ([category, amount]) => ({
       category,
-      amount,
+      amount: Number(amount),
     }),
   );
 
-  
-
+  // Different colors for different expense categories.
   const COLORS = [
     "#ef4444",
     "#3b82f6",
@@ -36,107 +32,90 @@ function ExpenseByCategory({ categoryTotals }) {
     "#84cc16",
   ];
 
-  const renderCustomizedShape = (props) => {
-    const { index, ...rest } = props;
-
-    return (
-      <Sector
-        {...rest}
-        fill={COLORS[index % COLORS.length]}
-      />
-    );
-  };
-
   return (
-    <div className="mt-8 w-full rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
-      {/* Heading */}
+    <div className="w-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+
+      {/* =====================================================
+          HEADER
+          ===================================================== */}
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-blue-600">
+          Spending Overview
+        </p>
+
+        <h2 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
           Expense by Category
         </h2>
 
-        <p className="mt-1 text-sm text-gray-500">
-          See how your expenses are distributed across categories.
+        <p className="mt-1 text-sm text-slate-500">
+          See where your money is being spent.
         </p>
       </div>
 
+      {/* =====================================================
+          EMPTY STATE
+          ===================================================== */}
       {chartData.length === 0 ? (
-        <div className="flex min-h-62.5 items-center justify-center rounded-xl bg-gray-50">
-          <p className="text-sm text-gray-500">
-            No expense data available yet.
-          </p>
+        <div className="flex min-h-72 items-center justify-center rounded-xl bg-slate-50">
+          <div className="text-center">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-lg shadow-sm">
+              ₨
+            </div>
+
+            <p className="font-semibold text-slate-700">
+              No expense data yet
+            </p>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Add an expense to see your spending breakdown.
+            </p>
+          </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:items-start">
-
-          {/* Left: Bar Chart */}
-          <div className="h-75 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
+        /* ===================================================
+           PIE CHART
+           =================================================== */
+        <div className="h-80 w-full sm:h-96">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
                 data={chartData}
-                margin={{
-                  top: 10,
-                  right: 10,
-                  left: 0,
-                  bottom: 10,
-                }}
-                barCategoryGap="25%"
+                dataKey="amount"
+                nameKey="category"
+                cx="50%"
+                cy="45%"
+                outerRadius="65%"
+                innerRadius="38%"
+                paddingAngle={2}
+                label
               >
-                <CartesianGrid strokeDasharray="3 3" />
+                {/* Give each category its own color. */}
+                {chartData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${entry.category}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
 
-                <XAxis
-                  dataKey="category"
-                  tick={{ fontSize: 12 }}
-                />
+              {/* Shows the exact amount when hovering. */}
+              <Tooltip
+                formatter={(value) => [
+                  `Rs. ${Number(value).toLocaleString()}`,
+                  "Amount",
+                ]}
+              />
 
-                <YAxis
-                  tick={{ fontSize: 12 }}
-                />
-
-                <Tooltip
-                  formatter={(value) => [
-                    `Rs. ${Number(value).toLocaleString()}`,
-                    "Amount",
-                  ]}
-                />
-
-                <Bar
-                  dataKey="amount"
-                  fill="#ef4444"
-                  maxBarSize={50}
-                  radius={[6, 6, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Right: Pie Chart */}
-          <div className="h-75 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={chartData}
-                  dataKey="amount"
-                  nameKey="category"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius="70%"
-                  label
-                  shape={renderCustomizedShape}
-                />
-
-                <Tooltip
-                  formatter={(value) => [
-                    `Rs. ${Number(value).toLocaleString()}`,
-                    "Amount",
-                  ]}
-                />
-
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
+              {/* Shows category names below the chart. */}
+              <Legend
+                verticalAlign="bottom"
+                height={36}
+                wrapperStyle={{
+                  fontSize: "12px",
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
       )}
     </div>
